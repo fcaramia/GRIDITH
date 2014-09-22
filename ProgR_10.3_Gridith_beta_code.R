@@ -17,7 +17,7 @@
 ################################################################
 ################################################################
 
-setType = function(mat, xlim = NULL, ylim = NULL){
+setType = function(mat, xlim = NULL, ylim = NULL, legend = TRUE){
   mat$type = 'A'
   mat$type[mat$D>mat$cut[1]] = 'B'
   mat$type[mat$a2unscaled>mat$a.cut[1] ] = 'D'
@@ -44,6 +44,22 @@ setType = function(mat, xlim = NULL, ylim = NULL){
     lines(range(EEs), rep(EEs[j], 2), lty = 'solid', col = 'grey20', lwd = .5)
     lines(rep(EEs[j], 2), range(EEs), lty = 'solid', col = 'grey20', lwd = .5)
   }
+
+  if (legend)
+  {
+    mtext(paste('A:', round(sum(mat$W[mat$type == 'A'])*100), '% of genome'), adj = 0, line = 1)
+    mtext(paste('B:', round(sum(mat$W[mat$type == 'B'])*100), '% of genome'), adj = 0)
+    mtext(paste('C:', round(sum(mat$W[mat$type == 'C'])*100), '% of genome'), adj = 0.5, line = 1)
+    mtext(paste('D:', round(sum(mat$W[mat$type == 'D'])*100), '% of genome'), adj = 0.5)
+    mat$ith = sum(mat$W[mat$type == 'B'])/(sum(mat$W[mat$type == 'A']) + 
+      sum(mat$W[mat$type == 'B']))
+    mtext(paste('ITH:', round(mat$ith[1]*100), '%'), adj = 1)
+    legend('bottomright', legend = c('A','B','C','D'),
+           pch = 16, col = c('blue','magenta','green','red'), bty = 'n')
+
+
+  }
+    print (paste('ith estimate: ',mat$ith[1]))
     mat
 }
 
@@ -204,10 +220,10 @@ getdist = function(mat, alpha, F, maxCN = 24){
   di
 }
 tukey = function(x, args, ...){
-  c = args$c
-  out =  c*c/6*(1-(1-(x/c)^2)^3)
-  ix = which(abs(x)>c)
-  out[ix] = c*c/6
+  k = args$c
+  out =  k*k/6*(1-(1-(x/k)^2)^3)
+  ix = which(abs(x)>k)
+  out[ix] = k*k/6
   out
 }
 dist = function(x, y){
@@ -264,8 +280,23 @@ optimizeRotation = function(mat, mystart, UB = NULL, LB = NULL,
       fs = c(fs, fs[j-1]*alphas[j-1]/alphas[j])
     }
   }
-  list(alphas = alphas, fs = fs, rotation.pars = pars)
+  pars = list(alphas = alphas, fs = fs, rotation.pars = pars)
+
+  mat$alphamax = pars$rotation.pars[1]
+  F = matrix(pars$rotation.pars[-1], ncol = 2, nrow = 2)
+  F = F*pars$fs[1]
+
+  Fm1 = solve(F)
+  a1r = mat$a1*Fm1[1,1] + mat$a2 * Fm1[1,2]
+  a2r = mat$a1*Fm1[2,1] + mat$a2 * Fm1[2,2]
+  mat$a1unscaled = pmin(a1r, a2r)
+  mat$a2unscaled = pmax(a1r, a2r)
+
+  mat
+ 
 }
+
+
 myeqfun = function(pars, x, w, maxCN=24, rhofunc = 'tukey', 
                    rhoargs = NULL){
   F = matrix(pars[-1], ncol = 2, nrow = 2)
@@ -633,83 +664,6 @@ plot.cn = function(x, y, main = NULL, xlim = NULL, xlab = NULL, ylab = NULL,
   title(xlab = xlab, ylab = ylab, line = 2)
 }
 
-################################################################
-################################################################
-#
-# Read example data
-#
-################################################################
-################################################################
-
-mat <- readRDS( 'segfile.RData')
-
-
-################################################################
-################################################################
-#
-# Rotation and ITH
-#
-################################################################
-################################################################
-
-mystart = start.alphamax.f(mat, colbychrom = TRUE, 
-                           dx.eq.dy = FALSE, 
-                           force.diag = TRUE)
-#We clicked these positions (x, y):
-#Two points along a vertical line: 
-#  (1.193036,  0.8479729) and (1.243445, 0.6519817)
-#Two points along a horizontal line: 
-#  (0.9787967, 0.9179698) and (1.1846342, 0.8619723)
-#An allelic balance cluster:
-#  (0.9493914, 0.9249694)
-#The algorithm only needs the clicks to be approximate.
-#Make sure the preliminary rotation looks good before proceeding.
-
-plot.transformed(mat, mystart$alpha, 
-                 mystart$F, xlim = NULL, ylim = NULL)
-
-mat = setWeights(mat, mystart, weight.constant = 5000000, nmad = 3)
-
-#You may have to adjust weights above and rerun optimization below:
-#Often it also helps to add the contraint eqfun = myeqfun
-#For some reason solnp() complains about the myeqfun, but the
-#results seem good anyway.
-pars = optimizeRotation(mat, mystart, UB = c(1, Inf, 0, 0, Inf), 
-                        eqfun = NULL)
-mat$alphamax = pars$rotation.pars[1]
-F = matrix(pars$rotation.pars[-1], ncol = 2, nrow = 2)
-F = F*pars$fs[1]
-
-Fm1 = solve(F)
-a1r = mat$a1*Fm1[1,1] + mat$a2 * Fm1[1,2]
-a2r = mat$a1*Fm1[2,1] + mat$a2 * Fm1[2,2]
-mat$a1unscaled = pmin(a1r, a2r)
-mat$a2unscaled = pmax(a1r, a2r)
-
-#Fix cn.cut, cn.cut0, cn.cuttop until regions outside 
-#the regular pattern of the main subclone are all grey:
-mat = setCutsUnscaled(mat, a.cut0 = 3, a.cuttop = 6.5, a.cut = 7,
-                      xlim = c(0,10), ylim = c(0,10))
-
-#Choose cut so that red segments (bottom two panels) seem
-#safely distant from the blue segments
-mat = subclonalCNdist(mat, cut = 3)
-
-mat = setType(mat, xlim = c(0,21))
-mtext(paste('A:', round(sum(mat$W[mat$type == 'A'])*100), '% of genome'), adj = 0, line = 1)
-mtext(paste('B:', round(sum(mat$W[mat$type == 'B'])*100), '% of genome'), adj = 0)
-mtext(paste('C:', round(sum(mat$W[mat$type == 'C'])*100), '% of genome'), adj = 0.5, line = 1)
-mtext(paste('D:', round(sum(mat$W[mat$type == 'D'])*100), '% of genome'), adj = 0.5)
-mat$ith = sum(mat$W[mat$type == 'B'])/(sum(mat$W[mat$type == 'A']) + 
-  sum(mat$W[mat$type == 'B']))
-mtext(paste('ITH:', round(mat$ith[1]*100), '%'), adj = 1)
-legend('bottomright', legend = c('A','B','C','D'),
-       pch = 16, col = c('blue','magenta','green','red'), bty = 'n')
-
-################################################################
-################################################################
-################################################################
-################################################################
 
 
 
