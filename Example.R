@@ -17,9 +17,6 @@ mat <- readRDS( 'segfile.RData')
 ################################################################
 ################################################################
 
-mystart = start.alphamax.f(mat, colbychrom = TRUE, 
-                           dx.eq.dy = TRUE, 
-                           force.diag = TRUE)
 #We clicked these positions (x, y):
 #Two points along a vertical line: 
 #  (1.193036,  0.8479729) and (1.243445, 0.6519817)
@@ -29,6 +26,14 @@ mystart = start.alphamax.f(mat, colbychrom = TRUE,
 #  (0.9493914, 0.9249694)
 #The algorithm only needs the clicks to be approximate.
 #Make sure the preliminary rotation looks good before proceeding.
+v=list('x'=c(1.193036,1.243445),'y'=c(0.8479729,0.6519817))
+h= list('x'=c(0.9787967,1.1846342),'y'=c(0.9179698,0.8619723))
+a=list('x'=0.9493914,'y'=0.9249694)
+
+mystart = start.alphamax.f(mat, colbychrom = TRUE, xlim = NULL, ylim = NULL,
+                           dx.eq.dy = TRUE, vertical.cluster.line=v, horizontal.cluster.line=h, allelic.balance.cluster=a,
+                           force.diag = TRUE)
+
 
 plot.transformed(mat, mystart$alpha, 
                  mystart$F, xlim = NULL, ylim = NULL)

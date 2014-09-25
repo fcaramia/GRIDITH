@@ -470,7 +470,7 @@ plot.transformed = function(mat, alpha, F, w=NULL, rhofunc = 'leastsq',
 }
 
 start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = NULL,
-                            colbychrom = FALSE, force.diag = TRUE,
+                            colbychrom = FALSE, force.diag = TRUE, vertical.cluster.line=NULL,horizontal.cluster.line=NULL,allelic.balance.cluster=NULL,
                             dx.eq.dy = FALSE){
   ##dx.eq.dy: Scale axis equally (logic)?
   ##force.diag: Force points on the diagonal to stay on diagonal (logic)?
@@ -484,20 +484,35 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
        main = 'Minor and major CN intensity')
   abline(0,1, col = 'red')
   
-  print('Mark two subsequent CN clusters along a "vertical" (to be) line:')
-  posy = locator(2)
+  posy = vertical.cluster.line
+  if (is.null(vertical.cluster.line))
+  {
+    print('Mark two subsequent CN clusters along a "vertical" (to be) line:')
+    posy = locator(2)
+  }
+  posl = posy
   #print(posy)
   #  print('Mark two distant points in one "vertical" line:')
   #  posl = locator(2)
-  posl = posy
-  print('Mark two subsequent CN clusters along a "horizontal" (to be) line:')
-  posx = locator(2)
+  posx = horizontal.cluster.line
+  if (is.null(horizontal.cluster.line))
+  {
+    
+    print('Mark two subsequent CN clusters along a "horizontal" (to be) line:')
+    posx = locator(2)
+  }
   #print(posx)
   #  print('Mark two distant points in one "horizontal" line:')
   #  posk = locator(2)
   posk = posx
-  print('Mark an allelic balance cluster:')
-  posb = locator(1)
+
+
+  posb = allelic.balance.cluster
+  if (is.null(allelic.balance.cluster))
+  {
+    print('Mark an allelic balance cluster:')
+    posb = locator(1)
+  }
   #print(posb)
   dy = abs(diff(posy$y))
   lines(posx$x, posx$y)
