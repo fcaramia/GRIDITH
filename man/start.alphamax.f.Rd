@@ -26,10 +26,10 @@
         integer: maximum number of grid lines to plot
     }
     \item{xlim}{
-        integer: lenght of x axis. If NULL will be calculated on basis of data
+        integer: lenght of x axis. If NULL will be calculated on basis of data scale
     }
     \item{ylim}
-        integer: lenght of y axis. If NULL will be calculated on basis of data
+        integer: lenght of y axis. If NULL will be calculated on basis of data scale
     }
     \item{dx.eq.dy}{
         logical: scale axes equally. 

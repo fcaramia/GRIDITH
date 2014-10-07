@@ -481,6 +481,7 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
   {
     cols = col.transp(as.numeric(mat$Chromosome), .3)
   }
+  #plot unscaled values
   #plot(mat$a2, mat$a1, pch = 16, col = cols, 
   #     xlim = xlim, ylim = ylim, xlab = 'Major intensity ratio a2', 
   #     ylab = 'Minor intensity ratio a1',
@@ -608,8 +609,6 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
 
   if (is.null(xlim)) xlim = c(0, quantile(a2, probs = c(1))) else xlim = c(0,xlim)
   if (is.null(ylim)) ylim = c(0, quantile(a1, probs = c(1))) else ylim = c(0,ylim)
-  
-  print (xlim )
   
   plot(a2, a1, pch = 16, col = cols, 
        xlab = 'Rotated a2', ylab = 'Rotated a1',
