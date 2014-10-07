@@ -8,7 +8,7 @@
     A longer description
 }
 \usage{
-    plot.transformed(matrix, alpha, F, w=NULL, rhofunc = 'leastsq',
+    plot.transformed(matrix, mystart, w=NULL, rhofunc = 'leastsq',
                             rhoargs = NULL, main = NULL, xlim = NULL, ylim = NULL,
                             maxCN = 24, color.by = 'eachrho')
 }
@@ -16,7 +16,7 @@
     \item{matrix}{
         input matrix. see details
     }
-    \item{alpha}{
+    \item{mystart}{
         data.frame: output from \code{\link{start.alphamax.f}}
     }
      \item{xlim}{

@@ -262,7 +262,9 @@ optimizeRotation = function(mat, mystart, UB = NULL, LB = NULL,
   a2p = mat$a1*Fm1[2,1] + mat$a2 * Fm1[2,2]
   xlim = c(0, quantile(a2p, probs = .95, na.rm = T)*1.2)
   ylim = c(0, quantile(a1p, probs = .95, na.rm = T)*1.2)
-  plot.transformed(mat, alpha, F, w=mat$rotationw, 
+  mystart$F = F
+  mystart$alpha = alpha
+  plot.transformed(mat, mystart, w=mat$rotationw, 
                    rhoargs=list(c=mat$rhoargs[1]), 
                    rhofunc = mat$rhofunc[1], 
                    xlim = xlim, ylim = ylim)
@@ -357,14 +359,15 @@ evaluate.weights = function(mat, alpha, F, rhofunc = 'tukey',
   title(main = 'Evaluation of rho function and weights', line = -1,
         outer = T)
 }
-plot.transformed = function(mat, alpha, F, w=NULL, rhofunc = 'leastsq',
+plot.transformed = function(mat, start, w=NULL, rhofunc = 'leastsq',
                             rhoargs = NULL, main = NULL, xlim = NULL, ylim = NULL,
                             maxCN = 24, color.by = 'eachrho'){
   require('RColorBrewer')
   require('graphics')
-  
+  F = start$F
+  alpha = start$alpha
   #Recalculate transformed lattice points from F and alpha
-  Fm1 = solve(F)  
+  Fm1 = solve(start$F)  
   A2 = 0:maxCN
   A1 = matrix(A2, ncol = maxCN + 1, nrow = maxCN + 1)
   A2 = t(A1)
@@ -482,11 +485,11 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
     cols = col.transp(as.numeric(mat$Chromosome), .3)
   }
   #plot unscaled values
-  #plot(mat$a2, mat$a1, pch = 16, col = cols, 
-  #     xlim = xlim, ylim = ylim, xlab = 'Major intensity ratio a2', 
-  #     ylab = 'Minor intensity ratio a1',
-  #     main = 'Minor and major CN intensity')
-  #abline(0,1, col = 'red')
+  plot(mat$a2, mat$a1, pch = 16, col = cols, 
+       xlim = xlim, ylim = ylim, xlab = 'Major intensity ratio a2', 
+       ylab = 'Minor intensity ratio a1',
+       main = 'Minor and major CN intensity')
+  abline(0,1, col = 'red')
   
   posy = vertical.cluster.line
   if (is.null(vertical.cluster.line))

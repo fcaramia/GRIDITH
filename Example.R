@@ -35,8 +35,7 @@ mystart = start.alphamax.f(mat, colbychrom = TRUE, xlim = NULL, ylim = NULL,
                            force.diag = TRUE)
 
 
-plot.transformed(mat, mystart$alpha, 
-                 mystart$F, xlim = NULL, ylim = NULL)
+plot.transformed(mat, mystart, xlim = NULL, ylim = NULL)
 
 mat = setWeights(mat, mystart, weight.constant = 5000000, nmad = 3)
 

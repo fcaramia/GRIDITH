@@ -5,7 +5,7 @@
     input of starting values for the rotation function and visualization of input matrix
 }
 \description{
-    Text or graphical input for starting values to be used in the rotation function optimizeRotation.
+    Text or graphical input for starting values to be used in the rotation function \code{\link{optimizeRotation}}.
     Plotting of input matrix values on a transformed scale
     For graphical input vertical.cluster.line, horizontal.cluster.line, allelic.balance.cluster must be set to NULL
 }
