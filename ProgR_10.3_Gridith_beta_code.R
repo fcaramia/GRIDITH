@@ -474,15 +474,18 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
                             dx.eq.dy = FALSE){
   ##dx.eq.dy: Scale axis equally (logic)?
   ##force.diag: Force points on the diagonal to stay on diagonal (logic)?
-  if (is.null(xlim)) xlim = c(0, quantile(mat$a2, probs = c(.9)))
-  if (is.null(ylim)) ylim = c(0, quantile(mat$a1, probs = c(.975)))
+  #if (is.null(xlim)) xlim = c(0, quantile(mat$a2, probs = c(.9)))
+  #if (is.null(ylim)) ylim = c(0, quantile(mat$a1, probs = c(.975)))
   cols = col.transp('grey', .3)
-  if (colbychrom) cols = col.transp(as.numeric(mat$Chromosome), .3)
-  plot(mat$a2, mat$a1, pch = 16, col = cols, 
-       xlim = xlim, ylim = ylim, xlab = 'Major intensity ratio a2', 
-       ylab = 'Minor intensity ratio a1',
-       main = 'Minor and major CN intensity')
-  abline(0,1, col = 'red')
+  if (colbychrom) 
+  {
+    cols = col.transp(as.numeric(mat$Chromosome), .3)
+  }
+  #plot(mat$a2, mat$a1, pch = 16, col = cols, 
+  #     xlim = xlim, ylim = ylim, xlab = 'Major intensity ratio a2', 
+  #     ylab = 'Minor intensity ratio a1',
+  #     main = 'Minor and major CN intensity')
+  #abline(0,1, col = 'red')
   
   posy = vertical.cluster.line
   if (is.null(vertical.cluster.line))
@@ -602,9 +605,13 @@ start.alphamax.f = function(mat, maxCN = 24, maxlines = 30, xlim = NULL, ylim = 
   x = cbind(mat$a1, mat$a2)
   a1 = Fm1[1,1] * x[,1] + Fm1[1,2]*x[,2]
   a2 = Fm1[2,1] * x[,1] + Fm1[2,2]*x[,2]
-  xlim = c(0, quantile(a2, probs = c(1)))
-  ylim = c(0, quantile(a1, probs = c(1)))
-  plot(a2, a1, pch = 16, col = col.transp('grey', .3), 
+
+  if (is.null(xlim)) xlim = c(0, quantile(a2, probs = c(1))) else xlim = c(0,xlim)
+  if (is.null(ylim)) ylim = c(0, quantile(a1, probs = c(1))) else ylim = c(0,ylim)
+  
+  print (xlim )
+  
+  plot(a2, a1, pch = 16, col = cols, 
        xlab = 'Rotated a2', ylab = 'Rotated a1',
        main = 'Minor and major CN intensity',
        xlim = xlim, ylim = ylim)
