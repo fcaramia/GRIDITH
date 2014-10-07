@@ -6,7 +6,8 @@ Deciphering clonality in aneuploid tumors
 Developed by Ingrid Lonnstedt 
 
 Publication:
-
+Deciphering clonality in aneuploid tumors using SNP array and sequencing data
+http://www.ncbi.nlm.nih.gov/pubmed/25270265
 
 
 
