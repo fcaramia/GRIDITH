@@ -1,10 +1,4 @@
-Peter MacCallum Cancer Centre
-
-Loi Lab
-
-WEHI
-
-Bioinformatics
+Loi Lab @ Peter MacCallum Cancer Centre
 
 GRIDITH
 ===
