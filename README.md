@@ -5,7 +5,7 @@ GRIDITH
 
 Deciphering clonality in aneuploid tumors
 
-Developed by Ingrid Lonnstedt 
+Developed by Ingrid Lonnstedt, Franco Caramia 
 
 Publication:
 Deciphering clonality in aneuploid tumors using SNP array and sequencing data
